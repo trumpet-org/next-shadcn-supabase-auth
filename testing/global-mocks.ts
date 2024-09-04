@@ -2,6 +2,7 @@ import process from "node:process";
 
 import { PagePath } from "@/config/enums";
 import type { Env } from "@/types/env-types";
+import { faker } from "@faker-js/faker";
 import { beforeEach, vi } from "vitest";
 
 const { mockUsePathname, mockRedirect, mockToast } = vi.hoisted(() => {
@@ -9,6 +10,7 @@ const { mockUsePathname, mockRedirect, mockToast } = vi.hoisted(() => {
 	Reflect.set(mockToast, "error", vi.fn());
 	Reflect.set(mockToast, "success", vi.fn());
 	Reflect.set(mockToast, "info", vi.fn());
+	Reflect.set(mockToast, "promise", vi.fn());
 
 	return {
 		mockUsePathname: vi.fn(),
@@ -57,6 +59,8 @@ export class MockPointerEvent extends Event {
 export const mockScrollIntoView = vi.fn();
 export const mockHasPointerCapture = vi.fn();
 export const mockReleasePointerCapture = vi.fn();
+export const mockCreateObjectURL = vi.fn().mockImplementation(() => faker.image.url());
+export const mockRevokeObjectURL = vi.fn();
 
 // see: https://github.com/jsdom/jsdom/issues/3294
 export const mockShowModal = vi.fn();
@@ -75,13 +79,15 @@ export const mockEnv = {
 } satisfies Env;
 
 beforeAll(() => {
-	window.PointerEvent = MockPointerEvent as any;
-	window.HTMLElement.prototype.scrollIntoView = mockScrollIntoView;
-	window.HTMLElement.prototype.hasPointerCapture = mockHasPointerCapture;
-	window.HTMLElement.prototype.releasePointerCapture = mockReleasePointerCapture;
+	HTMLDialogElement.prototype.close = mockClose;
 	HTMLDialogElement.prototype.show = mockShow;
 	HTMLDialogElement.prototype.showModal = mockShowModal;
-	HTMLDialogElement.prototype.close = mockClose;
+	window.HTMLElement.prototype.hasPointerCapture = mockHasPointerCapture;
+	window.HTMLElement.prototype.releasePointerCapture = mockReleasePointerCapture;
+	window.HTMLElement.prototype.scrollIntoView = mockScrollIntoView;
+	window.PointerEvent = MockPointerEvent as any;
+	window.URL.createObjectURL = mockCreateObjectURL;
+	window.URL.revokeObjectURL = mockRevokeObjectURL;
 });
 
 beforeEach(() => {
