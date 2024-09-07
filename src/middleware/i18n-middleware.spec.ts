@@ -34,6 +34,7 @@ describe("i18nMiddleware", () => {
 				headers: {
 					get: vi.fn(),
 					forEach: vi.fn(),
+					entries: vi.fn().mockReturnValue([]),
 				},
 			}) as unknown as NextRequest;
 	});
