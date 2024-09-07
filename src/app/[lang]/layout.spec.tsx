@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import RootLayout from "./layout";
+import { fontSans } from "@/utils/fonts";
 
 // Mock the components and utilities
 vi.mock("@/components/navbar", () => ({
@@ -43,6 +44,12 @@ Object.defineProperty(window, "matchMedia", {
 	})),
 });
 
+// Add this mock for i18n-config
+vi.mock("dictionaries/i18n-config", () => ({
+	i18n: { locales: ["en", "fr"] },
+	Locale: { en: "en", fr: "fr" },
+}));
+
 describe("RootLayout", () => {
 	vi.stubEnv("NEXT_PUBLIC_SITE_URL", "https://example.com");
 
@@ -51,7 +58,7 @@ describe("RootLayout", () => {
 	});
 
 	it("renders the layout with all expected components", () => {
-		render(<RootLayout>Test Content</RootLayout>);
+		render(<RootLayout params={{ lang: "en" }}>Test Content</RootLayout>);
 
 		expect(screen.getByTestId("navbar")).toBeInTheDocument();
 		expect(screen.getByTestId("main-container")).toBeInTheDocument();
@@ -60,16 +67,24 @@ describe("RootLayout", () => {
 	});
 
 	it("applies correct classes to the body", () => {
-		render(<RootLayout>Test Content</RootLayout>);
+		render(<RootLayout params={{ lang: "en" }}>Test Content</RootLayout>);
 
 		const body = screen.getByText("Test Content").closest("body");
-		expect(body).toHaveClass("min-h-screen bg-background font-sans antialiased font-sans");
+		expect(body).toHaveClass("min-h-screen bg-background font-sans antialiased");
+		expect(body).toHaveClass(fontSans.variable);
 	});
 
 	it("renders children within the main container", () => {
-		render(<RootLayout>Test Content</RootLayout>);
+		render(<RootLayout params={{ lang: "en" }}>Test Content</RootLayout>);
 
 		const mainContainer = screen.getByTestId("main-container");
 		expect(mainContainer).toHaveTextContent("Test Content");
+		expect(mainContainer).toHaveClass("md:min-h[calc(100dvh-5rem)] min-h-[calc(100dvh-4rem)]");
+	});
+	it("sets the correct lang attribute on the html element", () => {
+		const { container } = render(<RootLayout params={{ lang: "en" }}>Test Content</RootLayout>);
+
+		const htmlElement = container.firstChild as HTMLElement;
+		expect(htmlElement.getAttribute("lang")).toBe("en");
 	});
 });
