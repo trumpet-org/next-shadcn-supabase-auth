@@ -17,9 +17,13 @@
 	},
 	"lint-staged": {
 		"*.{js,cjs,mjs,jsx,mjsx,cjsx,ts,tsx,mts,cjs,mtsx,ctsx,json,html,css}": "biome format --write",
-		"*.{js,cjs,mjs,jsx,mjsx,cjsx,ts,tsx,mts,cjs,mtsx,ctsx}": ["biome lint --fix", "eslint --fix --no-warn-ignored"]
+		"*.{js,cjs,mjs,jsx,mjsx,cjsx,ts,tsx,mts,cjs,mtsx,ctsx,md,mdx,css}": [
+			"biome lint --fix",
+			"eslint --fix --no-warn-ignored"
+		]
 	},
 	"dependencies": {
+		"@formatjs/intl-localematcher": "^0.5.4",
 		"@hookform/resolvers": "^3.9.0",
 		"@icons-pack/react-simple-icons": "^10.0.0",
 		"@radix-ui/react-label": "^2.1.0",
@@ -33,7 +37,8 @@
 		"clsx": "^2.1.1",
 		"lucide-react": "^0.445.0",
 		"next": "14.2.13",
-		"next-themes": "^0.3.0",
+      	"negotiator": "^0.6.3",
+      	"next-themes": "^0.3.0",
 		"pino": "^9.4.0",
 		"pino-http": "^10.3.0",
 		"pino-pretty": "^11.2.2",
@@ -54,6 +59,7 @@
 		"@testing-library/jest-dom": "^6.5.0",
 		"@testing-library/react": "^16.0.1",
 		"@testing-library/user-event": "^14.5.2",
+      	"@types/negotiator": "^0.6.3",
 		"@types/node": "^22.5.5",
 		"@types/react": "^18.3.8",
 		"@types/react-dom": "^18.3.0",
