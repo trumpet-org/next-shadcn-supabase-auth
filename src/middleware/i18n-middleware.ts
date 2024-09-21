@@ -1,11 +1,11 @@
+import { i18n } from "@/i18n";
 import { match as matchLocale } from "@formatjs/intl-localematcher";
 import Negotiator from "negotiator";
 import { type NextRequest, NextResponse } from "next/server";
-import { i18n } from "../../dictionaries/i18n-config";
 
 function getLocale(request: NextRequest): string | undefined {
 	const { locales, defaultLocale } = i18n;
-	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+
 	if (locales.length < 2) {
 		return defaultLocale;
 	}
@@ -14,12 +14,9 @@ function getLocale(request: NextRequest): string | undefined {
 		negotiatorHeaders[key] = value;
 	}
 
-	// @ts-expect-error locales are readonly
 	const languages = new Negotiator({ headers: negotiatorHeaders }).languages(locales);
 
-	const locale = matchLocale(languages, locales, i18n.defaultLocale);
-
-	return locale;
+	return matchLocale(languages, locales, i18n.defaultLocale);
 }
 
 /**

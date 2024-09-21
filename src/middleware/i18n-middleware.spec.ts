@@ -1,9 +1,9 @@
-import { type NextRequest, NextResponse } from "next/server";
-import { i18nMiddleware } from "./i18n-middleware";
-import { i18n } from "../../dictionaries/i18n-config";
-import { vi, describe, it, expect, beforeEach } from "vitest";
+import { i18n } from "@/i18n";
 import { match as matchLocale } from "@formatjs/intl-localematcher";
 import Negotiator from "negotiator";
+import { type NextRequest, NextResponse } from "next/server";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { i18nMiddleware } from "./i18n-middleware";
 
 vi.mock("next/server", () => ({
 	NextResponse: {

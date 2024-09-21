@@ -1,11 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
-import LandingPage from "./page";
+import en from "::localisations/en.json";
 import { getServerClient } from "@/utils/supabase/server";
+import { render, screen, waitFor } from "@testing-library/react";
 import { redirect } from "next/navigation";
-import { getDictionary } from "dictionaries/dictionaries";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import LandingPage from "./page";
 
-// Mock the necessary imports and functions
 vi.mock("@/utils/supabase/server", () => ({
 	getServerClient: vi.fn(),
 }));
@@ -15,23 +14,12 @@ vi.mock("next/navigation", () => ({
 }));
 
 vi.mock("next/image", () => ({
-	// biome-ignore lint/a11y/useAltText: <explanation>
-	default: ({ alt, ...props }: any) => <img alt={alt || "mock image"} {...props} />,
-}));
-
-vi.mock("dictionaries/dictionaries", () => ({
-	getDictionary: vi.fn(),
+	default: ({ alt, ...props }: any) => <img alt={alt ?? "mock image"} {...props} />,
 }));
 
 describe("LandingPage", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
-		// Set up a default mock for getDictionary
-		vi.mocked(getDictionary).mockResolvedValue({
-			landingTitle: "Mock Title",
-			landingDescription: "Mock Description",
-			landingCta: "Mock CTA",
-		});
 	});
 
 	it("redirects when user is authenticated", async () => {
@@ -54,18 +42,13 @@ describe("LandingPage", () => {
 			},
 		};
 		vi.mocked(getServerClient).mockReturnValue(mockSupabase as any);
-		vi.mocked(getDictionary).mockResolvedValue({
-			landingTitle: "Mock Title",
-			landingDescription: "Mock Description",
-			landingCta: "Mock CTA",
-		});
 
-		const { container } = render(await LandingPage({ params: { lang: "en" } }));
+		render(await LandingPage({ params: { lang: "en" } }));
 
-		expect(container.querySelector("h1")).toBeInTheDocument();
-		expect(container.querySelector("p")).toBeInTheDocument();
-		expect(screen.getByRole("link")).toBeInTheDocument();
-		expect(container.querySelector('img[alt="screenshot"]')).toBeInTheDocument();
+		expect(screen.getByTestId("landing-title")).toBeInTheDocument();
+		expect(screen.getByTestId("landing-description")).toBeInTheDocument();
+		expect(screen.getByTestId("landing-cta")).toBeInTheDocument();
+		expect(screen.getByTestId("landing-screenshot")).toBeInTheDocument();
 	});
 
 	it("uses the correct language parameter for the auth link", async () => {
@@ -75,11 +58,6 @@ describe("LandingPage", () => {
 			},
 		};
 		vi.mocked(getServerClient).mockReturnValue(mockSupabase as any);
-		vi.mocked(getDictionary).mockResolvedValue({
-			landingTitle: "Mock Title",
-			landingDescription: "Mock Description",
-			landingCta: "Mock CTA",
-		});
 
 		render(await LandingPage({ params: { lang: "en" } }));
 
@@ -87,24 +65,20 @@ describe("LandingPage", () => {
 		expect(link).toHaveAttribute("href", "en/auth");
 	});
 
-	it("applies translations from getDictionary", async () => {
+	it("applies translations from getLocale", async () => {
 		const mockSupabase = {
 			auth: {
 				getUser: vi.fn().mockResolvedValue({ data: { user: null } }),
 			},
 		};
 		vi.mocked(getServerClient).mockReturnValue(mockSupabase as any);
-		const mockDictionary = {
-			landingTitle: "Mock Title",
-			landingDescription: "Mock Description",
-			landingCta: "Mock CTA",
-		};
-		vi.mocked(getDictionary).mockResolvedValue(mockDictionary);
+		render(await LandingPage({ params: { lang: "en" } }));
 
-		const { container } = render(await LandingPage({ params: { lang: "en" } }));
+		await waitFor(() => {
+			expect(screen.getByTestId("landing-title")).toHaveTextContent(en.landingTitle);
+		});
 
-		expect(container.querySelector("h1")?.textContent).toBe(mockDictionary.landingTitle);
-		expect(container.querySelector("p")?.textContent).toBe(mockDictionary.landingDescription);
-		expect(screen.getByRole("link").textContent).toBe(mockDictionary.landingCta);
+		expect(screen.getByTestId("landing-description")).toHaveTextContent(en.landingDescription);
+		expect(screen.getByTestId("landing-cta")).toHaveTextContent(en.landingCta);
 	});
 });

@@ -1,14 +1,14 @@
-import type React from "react";
 import "@/styles/globals.css";
 
-import type { Metadata } from "next";
 import { Navbar } from "@/components/navbar";
+import { type SupportedLocale, i18n } from "@/i18n";
 import { getEnv } from "@/utils/env";
 import { fontSans } from "@/utils/fonts";
 import { cn } from "gen/cn";
 import { Toaster } from "gen/ui/sonner";
+import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
-import { type Locale, i18n } from "dictionaries/i18n-config";
+import type { ReactNode } from "react";
 
 export function generateStaticParams() {
 	return i18n.locales.map((locale) => ({ lang: locale }));
@@ -28,8 +28,8 @@ export default function RootLayout({
 	children,
 	params,
 }: {
-	children: React.ReactNode;
-	params: { lang: Locale };
+	children: ReactNode;
+	params: { lang: SupportedLocale };
 }) {
 	return (
 		<html lang={params.lang}>

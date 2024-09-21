@@ -1,9 +1,8 @@
+import { fontSans } from "@/utils/fonts";
 import { render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
 import RootLayout from "./layout";
-import { fontSans } from "@/utils/fonts";
 
-// Mock the components and utilities
 vi.mock("@/components/navbar", () => ({
 	Navbar: () => <div data-testid="navbar">Navbar</div>,
 }));
@@ -28,7 +27,6 @@ vi.mock("next-themes", async (importOriginal) => {
 	};
 });
 
-// Mock window.matchMedia
 Object.defineProperty(window, "matchMedia", {
 	writable: true,
 	value: vi.fn().mockImplementation((query) => ({
@@ -43,7 +41,6 @@ Object.defineProperty(window, "matchMedia", {
 	})),
 });
 
-// Add this mock for i18n-config
 vi.mock("dictionaries/i18n-config", () => ({
 	i18n: { locales: ["en", "fr"] },
 	Locale: { en: "en", fr: "fr" },
